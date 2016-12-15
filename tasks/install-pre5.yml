@@ -65,6 +65,14 @@
     dest: "/etc/init.d/{{ solr_service_name }}"
     mode: 0755
 
+- name: Run systemd daemon_reload (RHEL 7 workaround).
+  systemd:
+    name: solr
+    daemon_reload: yes
+  when: >
+    (ansible_os_family == 'RedHat')
+    and (ansible_distribution_version.split(".")[0] == '7')
+
 - name: Ensure daemon is installed (Debian).
   apt: name=daemon state=installed
   when: ansible_os_family == "Debian"
